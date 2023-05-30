@@ -1,0 +1,29 @@
+version: "3"
+
+vars:
+  # TODO: read name and version from addon.xml
+  PACKAGE_NAME: protobuf
+  VERSION: 4.23.2
+  DIST_PATH: "resources/lib"
+
+tasks:
+  clean:
+    cmds:
+      - "rm -rf {{.DIST_PATH}}"
+
+  download:
+    cmds:
+      - "mkdir -p {{.DIST_PATH}}"
+      - "pip install --ignore-installed --target {{.DIST_PATH}} {{.PACKAGE_NAME}}=={{.VERSION}}"
+    generates:
+      - "{{.DIST_PATH}}/**/*.py"
+
+  dist:
+    deps:
+      - download
+    cmds:
+      - "touch {{.DIST_PATH}}/google/__init__.py"
+      - "rm -rf {{.DIST_PATH}}/*.dist-info"
+
+  default:
+    - task: dist
